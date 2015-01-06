@@ -11,7 +11,15 @@ for season in seasons:
 
 # The past week's Premier League Fixtures:
 website = urlopen('http://football-data.org/soccerseasons/354/fixtures/?timeFrame=p7')
-fixtures = json.loads(website.read())
+recentFixtures = json.loads(website.read())
 print "The past 7 days' Premier League fixtures were:"
-for match in fixtures:
-    print '\t' + str(match['homeTeam']) + ' v ' + str(match['awayTeam'])
+for fixture in recentFixtures:
+    print '\t' + str(fixture['homeTeam']) + ' v ' + str(fixture['awayTeam'])
+print
+
+# The next week's Premier League Fixtures:
+website = urlopen('http://football-data.org/soccerseasons/354/fixtures/?timeFrame=n7')
+upcomingFixtures = json.loads(website.read())
+print "Premier League football fixtures coming up in the next 7 days..."
+for fixture in upcomingFixtures:
+    print '\t' + str(fixture['homeTeam']) + ' v ' + str(fixture['awayTeam'])
