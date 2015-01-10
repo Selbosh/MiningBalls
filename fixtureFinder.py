@@ -1,10 +1,7 @@
-import json, stream, time
+import json, time
 from urllib2 import urlopen
 
-
-
 # Note that the Premier League 2014/15 season has id=354
-
 recentFixturesData = urlopen('http://football-data.org/soccerseasons/354/fixtures/?timeFrame=p7')
 recentFixtures = json.load(recentFixturesData)
 print "The past 7 days' Premier League fixtures were:"
@@ -37,6 +34,3 @@ for fixture in upcomingFixtures:
     for team in premTeams:
         if team['name']==hT: #Find the id of the home team
             print "\t has ID " + str(team['id']) + " and hashtag #" + str(hashtagDict[str(team['id'])])
-
-
-#stream.search('#cfc', finalWhistleTime) # Will stream 10 tweets right now containing the keyword in arg

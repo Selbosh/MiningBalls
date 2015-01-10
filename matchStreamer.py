@@ -2,8 +2,8 @@ import tweepy, time
 
 class StdOutListener(tweepy.StreamListener):
     '''Collects and prints tweets from the streaming API.
-    Ends after a fixed duration or maximum number of tweets,
-    whichever one is the sooner.'''
+    Ends after a fixed duration or maximum number of tweets ---
+    whichever is sooner.'''
     
     tweetCounter = 0
     
