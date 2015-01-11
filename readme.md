@@ -5,8 +5,8 @@
 * Plot sentiment over time using R
 * Look at past data as well
 * Build a sentimental analysis machine
-** Start with a basic one
-** Then add one capable of learning
+	- Start with a basic one
+	- Then add one capable of learning
 
 ## Potential issues 
 * If two matches are playing at the same time, what to do? Join all the search terms into one Stream request and somehow extricate the tweets later? Or just pick one match to follow (_say, using an RNG_) and ignore the other(s) on this occasion?
@@ -16,7 +16,9 @@
 * Improve the streamer so it writes useful information to a file, including tweet text, hashtags (maybe) and time of tweet. If possible exclude retweets
 * Find a way to schedule the streamer to start before kick off and the end after the final whistle. This may involve Windows Task Scheduler, or else a small helper script that periodically checks conditions and then triggers the main streamer (etc) when a match is taking place.
 * Write an initial Python script to perform sentiment analysis using a corpus of positive and negative words. Be sure to remove stop words, hyperlinks etc.
-* Strip down the data to team (or hashtag), sentiment score and timestamp. Create density plot. Maybe build into a Shiny app that allows adjustment of bandwidth of the density plot / width of bars in histograms. Host on http://selby.shinyapps.io
+	- Later improve with some form of machine learning to assign sentiment scores to terms not found in corpus
+* Strip down the data to team (or hashtag), sentiment score and timestamp. Create density plot.
+	- Maybe build into a Shiny app that allows adjustment of bandwidth of the density plot / width of bars in histograms. Host on http://selby.shinyapps.io
 
 ## References
 * [RESTful football data](http://www.football-data.org/index "football-data.org")
