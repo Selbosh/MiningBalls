@@ -31,7 +31,7 @@ def streamScheduler(matchList):
 	for fixture in matchList:
 		scheduleTime = time.mktime(kickOff(fixture).timetuple())
 		preMatch = 60*15 #minutes before kick-off
-		s.enterabs(scheduleTime-preMatch, 1, streamer, ())
+		s.enterabs(scheduleTime-preMatch, 1, streamer, ()) #arguments may include team names/IDs or hashtags or keywords
 		print 'Stream scheduled for', kickOff(fixture)
 	try:
 		s.run()
