@@ -35,7 +35,7 @@ class StdOutListener(tweepy.StreamListener):
 
     def on_timeout(self):
         print >> sys.stderr, 'Timeout...'
-        time.sleep(5)
+        time.sleep(90)
         return True # Wait 5 seconds, then continue
 
 
@@ -57,12 +57,25 @@ def getTweetsByHashtag(filename, hashtag, stopAtCount, stopAtTime):
         StdOutListener.finishTime = stopAtTime
         auth = authorise()
         sAPI = tweepy.streaming.Stream(auth, StdOutListener(), timeout=60)
-        sAPI.filter(track=[hashtag], languages=['en'])
+        sAPI.filter(track=hashtag, languages=['en'])
+    except tweepy.TweepError, e:
+            print e.message
+            if e.message == 'Not authorized.':
+                    pass
+            elif e.message == [{u'message': u'Rate limit exceeded', u'code': 88}]:
+                    print "Start : %s" % time.ctime()
+                    time.sleep(930)
+                    print "End : %s" % time.ctime()
+            else:
+                    pass
+    except Exception, e:
+        print type(e)
     except KeyboardInterrupt, e: #Ctrl+C
         print 'Stream interrupted by user (KeyboardInterrupt)'
+    
 
 
 if __name__ == '__main__':
     print 'Running script...'
-    finalWhistle = time.time()+60 # One minute from now
-    getTweetsByHashtag('testfile', 'twitter', 20, finalWhistle)
+    finalWhistle = time.time()+60*60 # One minute from now
+    getTweetsByHashtag('exampledata', ['football'], 10000, finalWhistle)
