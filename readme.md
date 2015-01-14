@@ -1,5 +1,5 @@
 ## Plan so far
-* ~~Find an upcoming match~~
+* Find an upcoming match
 * Start the Twitter streaming API one hour before
 * End the stream one hour after
 * Plot sentiment over time using R
@@ -16,7 +16,7 @@
 
 ## To do
 * ~~Manually create a dictionary of possible search terms for each team playing: (_e.g. Tottenham Hotspur FC might call for "Tottenham", "Spurs", "Tottenham Hotspur" and so on._) However this can be accepted as a limitation of the app for now; Twitter's search engine may be clever enough to work out which Tweets to return anyway...~~ Got a list of 'official' hashtags for each team in the 14-15 Premier League (see References).
-* Improve the streamer so it writes useful information to a file, including tweet text, hashtags (maybe) and time of tweet. If possible exclude retweets
+* ~~Improve the streamer so it writes useful information to a file, including tweet text, hashtags (maybe) and time of tweet. If possible exclude retweets~~
 * ~~Find a way to schedule the streamer to start before kick off and the end after the final whistle. This may involve Windows Task Scheduler, or else a small helper script that periodically checks conditions and then triggers the main streamer (etc) when a match is taking place.~~
 * Write an initial Python script to perform sentiment analysis using a corpus of positive and negative words. Be sure to remove stop words, hyperlinks etc.
 	- Later improve with some form of machine learning to assign sentiment scores to terms not found in corpus

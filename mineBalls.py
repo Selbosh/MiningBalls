@@ -26,7 +26,7 @@ def streamer():
 	print 'Streaming...', time.time()
 	
 def streamScheduler(matchList):
-	'''Creates a queue of processes at today's kick-off times'''
+	'''Creates a queue of processes at today's kick-off times, input as a list of match IDs'''
 	s = sched.scheduler(time.time, time.sleep)
 	for fixture in matchList:
 		scheduleTime = time.mktime(kickOff(fixture).timetuple())

@@ -1,34 +1,40 @@
-import tweepy, time
+import tweepy, time, json
+import sys, codecs
+
+# Fix for printing to Windows console
+#sys.stdout = codecs.getwriter('utf8')(sys.stdout)
+#sys.stderr = codecs.getwriter('utf8')(sys.stderr)
 
 class StdOutListener(tweepy.StreamListener):
-    '''Collects and prints tweets from the streaming API.
+    '''Collects tweets from the streaming API and writes to a file.
     Ends after a fixed duration or maximum number of tweets ---
     whichever is sooner.'''
     
     tweetCounter = 0
     
     def on_status(self, status):
-        print('Tweet text:\t' + status.text)
-        #for hashtag in status.entities['hashtags']:
-        #    print(hashtag['text'])
+        f = open(self.filename, 'a')
+        output = json.dumps(status._json)
+        f.write(output.encode('utf-8')+'\n')
+        f.close()
         self.tweetCounter += 1
-        print(self.tweetCounter)
+        print self.tweetCounter, status.user.screen_name
         if self.tweetCounter < self.maxTweets:
             if time.time() < self.finishTime:
                 return True
             else:
                 print 'Time\'s up!'
         else:
-            print 'Maximum tweets = ' + str(self.tweetCounter)
+            print 'Hit maximum tweet count =', str(self.tweetCounter)
         return False
 
     def on_error(self, status_code):
-        print('Error with code: ' + str(status_code))
+        print >> sys.stderr, 'Error with code:', str(status_code)
         time.sleep(5)
         return True # Wait 5 seconds, then continue
 
     def on_timeout(self):
-        print('Timeout...')
+        print >> sys.stderr, 'Timeout...'
         time.sleep(5)
         return True # Wait 5 seconds, then continue
 
@@ -44,13 +50,14 @@ def authorise():
     return auth
 
 
-def getTweetsByHashtag(hashtag, stopAtCount, stopAtTime):
+def getTweetsByHashtag(filename, hashtag, stopAtCount, stopAtTime):
     try:
+        StdOutListener.filename = str(filename)+ ".txt"
         StdOutListener.maxTweets = stopAtCount
         StdOutListener.finishTime = stopAtTime
         auth = authorise()
-        streamingAPI = tweepy.streaming.Stream(auth, StdOutListener(), timeout=60)
-        streamingAPI.filter(track=[hashtag], languages=['en'])
+        sAPI = tweepy.streaming.Stream(auth, StdOutListener(), timeout=60)
+        sAPI.filter(track=[hashtag], languages=['en'])
     except KeyboardInterrupt, e: #Ctrl+C
         print 'Stream interrupted by user (KeyboardInterrupt)'
 
@@ -58,4 +65,4 @@ def getTweetsByHashtag(hashtag, stopAtCount, stopAtTime):
 if __name__ == '__main__':
     print 'Running script...'
     finalWhistle = time.time()+60 # One minute from now
-    getTweetsByHashtag('cfc', 10, finalWhistle)
+    getTweetsByHashtag('testfile', 'twitter', 20, finalWhistle)
