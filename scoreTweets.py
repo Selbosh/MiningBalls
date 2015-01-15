@@ -17,7 +17,7 @@ def sentiment(text, corpus):
     words = text.split(' ')
     for word in words:
         if word in corpus:
-            print '\t'+word, corpus[word]
+            print '###'+word, corpus[word]
             score += corpus[word]
     return score
 
@@ -30,10 +30,10 @@ def loadTweets(file):
 
 def readTweet(tweet):
     '''Return text, possibly with hashtags and symbols removed'''
-    textRaw = tweet['text'].lower()
-    for p in list(punctuation):
-        textCleaned = textRaw.replace(p,'')
-    return textRaw
+    textRaw = tweet['text'].lower().strip()
+    #remove URLs here plz
+    textClean = "".join(c for c in textRaw if c not in punctuation)
+    return textClean
 
 def main():
     sentDict = loadCorpus('AFINN-111.txt')
