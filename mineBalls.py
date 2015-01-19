@@ -33,16 +33,15 @@ def hashtags(matchID):
 	
 def streamer(matchID, endTime):
 	print 'Streaming started at', datetime.today()
-	#endTime = time.time()+10 #TEST
 	matchStreamer.getTweetsByHashtag(matchID, hashtags(matchID), 10000, endTime)
 	
 def streamScheduler(matchList):
-	'''For today's matches, schedules streamers to start 15 minutes before kick-off and run for 2 hours'''
+	'''For today's matches, schedules streamers to start 5 minutes before kick-off and run for 2 hours'''
 	s = sched.scheduler(time.time, time.sleep)
 	for fixture in matchList:
 		kickOffTime = time.mktime(kickOff(fixture).timetuple())
-		preKickOff = kickOffTime - 60*15
-		endTime = time.mktime(kickOff(fixture).timetuple()) + 60*105
+		preKickOff = kickOffTime - 60*5
+		endTime = time.mktime(kickOff(fixture).timetuple()) + 60*120
 		s.enterabs(preKickOff, 1, streamer, (fixture['id'], endTime))
 		print 'Stream scheduled for', fixture['homeTeam'], 'vs.', fixture['awayTeam']
 		print 'Kick-off is at', kickOff(fixture), 'and streamer will start 15 mins before.'
@@ -55,6 +54,4 @@ def main():
 	streamScheduler(matchesOfTheDay())
 
 if __name__ == '__main__':
-	#print 'Hashtags:', hashtags(136836)
-	#print 'Match ID:', matchesOfTheDay()[0]['id']
 	main()
