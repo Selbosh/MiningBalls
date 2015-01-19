@@ -32,29 +32,29 @@ def hashtags(matchID):
 	return [hashtagDict[homeTeam], hashtagDict[awayTeam]]
 	
 def streamer(matchID, endTime):
-	print 'Streaming...', time.time()
+	print 'Streaming started at', datetime.today()
 	#endTime = time.time()+10 #TEST
 	matchStreamer.getTweetsByHashtag(matchID, hashtags(matchID), 10000, endTime)
 	
 def streamScheduler(matchList):
-	'''Creates a queue of processes at today's kick-off times, input as a list of match IDs'''
+	'''For today's matches, schedules streamers to start 15 minutes before kick-off and run for 2 hours'''
 	s = sched.scheduler(time.time, time.sleep)
 	for fixture in matchList:
-		startTime = time.mktime(kickOff(fixture).timetuple())
-		earlyTime = 60*15
+		kickOffTime = time.mktime(kickOff(fixture).timetuple())
+		preKickOff = kickOffTime - 60*15
 		endTime = time.mktime(kickOff(fixture).timetuple()) + 60*105
-		s.enterabs(time.time()+3, 1, streamer, (fixture['id'], endTime))
-		print 'Stream scheduled for', kickOff(fixture)
+		s.enterabs(preKickOff, 1, streamer, (fixture['id'], endTime))
+		print 'Stream scheduled for', fixture['homeTeam'], 'vs.', fixture['awayTeam']
+		print 'Kick-off is at', kickOff(fixture), 'and streamer will start 15 mins before.'
 	try:
 		s.run()
 	except KeyboardInterrupt:
 		print 'Stream scheduler cancelled by user (KeyboardInterrupt)'
 
+def main():
+	streamScheduler(matchesOfTheDay())
+
 if __name__ == '__main__':
-	#print matchesOfTheDay()
-	print 'Hashtags:', hashtags(136836)
-	print 'Match ID:', matchesOfTheDay()[0]['id']
-	#matchStreamer.getTweetsByHashtag('136836', hashtags(136836), 100000, time.time()+10 )
-	#streamer(matchesOfTheDay()[0])
-	matchesToday = matchesOfTheDay()
-	streamScheduler(matchesToday)
+	#print 'Hashtags:', hashtags(136836)
+	#print 'Match ID:', matchesOfTheDay()[0]['id']
+	main()
