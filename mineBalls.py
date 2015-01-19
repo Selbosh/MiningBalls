@@ -21,6 +21,15 @@ def matchesOfTheDay():
 		print "There are no upcoming Premier League football matches today."
 	return gamesToday
 
+def hashtags(ID):
+	matchID = str(ID)
+	fixtureData = urlopen('http://football-data.org/soccerseasons/354/fixtures/?id='+matchID)
+	
+	homeTeam =
+	with open('team_hashtags.json') as hashtagFile:
+		hashtagDict = json.loads(hashtagFile.read())
+	return hashtagDict[matchID]
+	
 def streamer():
 	'''Just a shell for now. As all matches are the same length(ish) the streaming duration (120 min?) can be hardcoded into the streamer.'''
 	print 'Streaming...', time.time()
@@ -40,4 +49,5 @@ def streamScheduler(matchList):
 
 if __name__ == '__main__':
 	#print matchesOfTheDay()
+	print hashtags(563)
 	streamScheduler(matchesOfTheDay())

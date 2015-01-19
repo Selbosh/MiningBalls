@@ -50,14 +50,14 @@ def authorise():
     return auth
 
 
-def getTweetsByHashtag(filename, hashtag, stopAtCount, stopAtTime):
+def getTweetsByHashtag(filename, hashtags, stopAtCount, stopAtTime):
     try:
         StdOutListener.filename = str(filename)+ ".txt"
         StdOutListener.maxTweets = stopAtCount
         StdOutListener.finishTime = stopAtTime
         auth = authorise()
         sAPI = tweepy.streaming.Stream(auth, StdOutListener(), timeout=60)
-        sAPI.filter(track=hashtag, languages=['en'])
+        sAPI.filter(track=hashtags, languages=['en'])
     except tweepy.TweepError, e:
             print e.message
             if e.message == 'Not authorized.':
@@ -69,13 +69,12 @@ def getTweetsByHashtag(filename, hashtag, stopAtCount, stopAtTime):
             else:
                     pass
     except Exception, e:
-        print type(e)
+        print e
     except KeyboardInterrupt, e: #Ctrl+C
         print 'Stream interrupted by user (KeyboardInterrupt)'
     
 
-
 if __name__ == '__main__':
     print 'Running script...'
-    finalWhistle = time.time()+60*60 # One minute from now
-    getTweetsByHashtag('exampledata', ['football'], 10000, finalWhistle)
+    test1Min = time.time()+60
+    getTweetsByHashtag('exampledata', ['football'], 100, test1Min)

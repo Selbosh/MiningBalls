@@ -36,7 +36,8 @@ def timePosted(tweet):
 
 def hashtags(tweet):
     '''Have two columns in output: binary variables indicating if home or away team hashtag mentioned'''
-    tags = [ht['text'] for ht in tweet['entities']['hashtags'] if ht['text'] in ['football']] #change to list of all hashtags
+	matchTags = ['football'] #change to list of all hashtags
+    tags = [ht['text'] for ht in tweet['entities']['hashtags'] if ht['text'] in matchTags]
     if len(tags)>0:
         return tags[0]
     else: return None
