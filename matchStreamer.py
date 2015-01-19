@@ -52,7 +52,7 @@ def authorise():
 
 def getTweetsByHashtag(filename, hashtags, stopAtCount, stopAtTime):
     try:
-        StdOutListener.filename = str(filename)+ ".txt"
+        StdOutListener.filename = 'tweets/' + str(filename)+ ".txt"
         StdOutListener.maxTweets = stopAtCount
         StdOutListener.finishTime = stopAtTime
         auth = authorise()

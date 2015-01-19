@@ -1,6 +1,7 @@
 import json, sched, time
 from datetime import datetime
 from urllib2 import urlopen
+import matchStreamer
 
 '''The general idea is to run the script on match day before kick-off.
 It should find the time of today's matches (if any) and schedule stream(s) accordingly.'''
@@ -21,26 +22,28 @@ def matchesOfTheDay():
 		print "There are no upcoming Premier League football matches today."
 	return gamesToday
 
-def hashtags(ID):
-	matchID = str(ID)
-	fixtureData = urlopen('http://football-data.org/soccerseasons/354/fixtures/?id='+matchID)
+def hashtags(matchID):
+	fixtureData = urlopen('http://football-data.org/fixtures/' + str(matchID))
+	fixture = json.load(fixtureData)
+	homeTeam = fixture['homeTeam']
+	awayTeam = fixture['awayTeam']
+	with open('team_hashtags.json') as htFile:
+		hashtagDict = json.loads(htFile.read())
+	return [hashtagDict[homeTeam], hashtagDict[awayTeam]]
 	
-	homeTeam =
-	with open('team_hashtags.json') as hashtagFile:
-		hashtagDict = json.loads(hashtagFile.read())
-	return hashtagDict[matchID]
-	
-def streamer():
-	'''Just a shell for now. As all matches are the same length(ish) the streaming duration (120 min?) can be hardcoded into the streamer.'''
+def streamer(matchID, endTime):
 	print 'Streaming...', time.time()
+	#endTime = time.time()+10 #TEST
+	matchStreamer.getTweetsByHashtag(matchID, hashtags(matchID), 10000, endTime)
 	
 def streamScheduler(matchList):
 	'''Creates a queue of processes at today's kick-off times, input as a list of match IDs'''
 	s = sched.scheduler(time.time, time.sleep)
 	for fixture in matchList:
-		scheduleTime = time.mktime(kickOff(fixture).timetuple())
-		preMatch = 60*15 #minutes before kick-off
-		s.enterabs(scheduleTime-preMatch, 1, streamer, ()) #arguments may include team names/IDs or hashtags or keywords
+		startTime = time.mktime(kickOff(fixture).timetuple())
+		earlyTime = 60*15
+		endTime = time.mktime(kickOff(fixture).timetuple()) + 60*105
+		s.enterabs(time.time()+3, 1, streamer, (fixture['id'], endTime))
 		print 'Stream scheduled for', kickOff(fixture)
 	try:
 		s.run()
@@ -49,5 +52,9 @@ def streamScheduler(matchList):
 
 if __name__ == '__main__':
 	#print matchesOfTheDay()
-	print hashtags(563)
-	streamScheduler(matchesOfTheDay())
+	print 'Hashtags:', hashtags(136836)
+	print 'Match ID:', matchesOfTheDay()[0]['id']
+	#matchStreamer.getTweetsByHashtag('136836', hashtags(136836), 100000, time.time()+10 )
+	#streamer(matchesOfTheDay()[0])
+	matchesToday = matchesOfTheDay()
+	streamScheduler(matchesToday)
