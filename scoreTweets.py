@@ -37,7 +37,7 @@ def timePosted(tweet):
     return created #since epoch; in R retrievable using as.POSIXct(time, origin="1970-01-01")
 
 def tweetHashtags(tweet, matchTags):
-	tags = [ht['text'] for ht in tweet['entities']['hashtags'] if ht['text'] in matchTags]
+	tags = [ht['text'].upper() for ht in tweet['entities']['hashtags'] if ht['text'].upper() in matchTags]
 	if len(tags)>1:
 		return ['Both']
 	else: return tags
