@@ -1,5 +1,7 @@
 import json, sys, time, csv
 from string import punctuation
+from urllib2 import urlopen
+from mineBalls import hashtags as matchHashtags
 
 '''Very very basic sentiment scorer that takes tweets and scores them according to an external corpus.
 Then returns time of tweet, hashtag(s) and score in a data structure.'''
@@ -34,24 +36,32 @@ def timePosted(tweet):
     created = time.mktime(time.strptime(tweet['created_at'],'%a %b %d %H:%M:%S +0000 %Y'))
     return created #since epoch; in R retrievable using as.POSIXct(time, origin="1970-01-01")
 
-def hashtags(tweet):
-    '''Have two columns in output: binary variables indicating if home or away team hashtag mentioned'''
-	matchTags = ['football'] #change to list of all hashtags
-    tags = [ht['text'] for ht in tweet['entities']['hashtags'] if ht['text'] in matchTags]
-    if len(tags)>0:
-        return tags[0]
-    else: return None
+def tweetHashtags(tweet, matchTags):
+	tags = [ht['text'] for ht in tweet['entities']['hashtags'] if ht['text'] in matchTags]
+	if len(tags)>1:
+		return ['Both']
+	else: return tags
+	# homeTag = ''
+	# awayTag = ''
+	# for tt in tweet['entities']['hashtags']:
+		# if matchTags[0] == tt['text']:
+			# homeTag = matchTags[0]
+		# if matchTags[1] == tt['text']:
+			# awayTag = matchTags[1]
+	# return [homeTag, awayTag]
 
-def main():
+def matchSentiment(matchID):
     sentDict = loadCorpus('AFINN-111.txt')
-    tweets = loadTweets('exampledata.txt')
-    with open('outputdata.csv', 'wb') as csvfile:
+    tweets = loadTweets('tweets\\'+str(matchID)+'.txt')
+    matchTags = matchHashtags(matchID)
+    with open('tweets\\'+str(matchID)+'.csv', 'wb') as csvfile:
         print >> sys.stdout, 'Writing data to file...'
         output = csv.writer(csvfile, delimiter=',')
         output.writerow(["sentiment","time","hashtags"])
         for tweet in tweets:
-            output.writerow([sentiment(tweet, sentDict), timePosted(tweet), hashtags(tweet)])
+            output.writerow([sentiment(tweet, sentDict), timePosted(tweet)] + tweetHashtags(tweet,matchTags))
     print >> sys.stdout, 'Completed'
 
 if __name__ == '__main__':
-        main()
+	matchSentiment(136836)
+	#print matchHashtags(136836)
