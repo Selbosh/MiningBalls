@@ -17,8 +17,8 @@ def matchesOfTheDay():
 	for fixture in upcomingFixtures:
 		if kickOff(fixture).date() == datetime.today().date():
 			gamesToday.append(fixture)
-	#if gamesToday == []:
-		#print "There are no upcoming Premier League football matches today."
+	if gamesToday == []:
+		print "There are no upcoming Premier League football matches today."
 	return gamesToday
 
 def streamer():

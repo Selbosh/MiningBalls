@@ -48,8 +48,9 @@ def main():
         print >> sys.stdout, 'Writing data to file...'
         output = csv.writer(csvfile, delimiter=',')
         output.writerow(["sentiment","time","hashtags"])
-        for tweet in tweets[:100]:
+        for tweet in tweets:
             output.writerow([sentiment(tweet, sentDict), timePosted(tweet), hashtags(tweet)])
+    print >> sys.stdout, 'Completed'
 
 if __name__ == '__main__':
         main()
