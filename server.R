@@ -13,6 +13,12 @@ shinyServer(function(input, output) {
   
   matchID = saved_matches[[1]]$id
   
+  output$scoreboard <- renderText({
+    paste(saved_matches[[1]]$homeTeam, saved_matches[[1]]$goalsHomeTeam,
+          '-',
+          saved_matches[[1]]$goalsAwayTeam, saved_matches[[1]]$awayTeam)    
+  })
+  
   output$sentimentPlot <- renderPlot({
     x     <- faithful[, 2] # Old Faithful Geyser data
     #bins  <- seq(min(x), max(x), length.out = input$bins + 1)

@@ -8,7 +8,8 @@ match_names <- lapply(saved_matches, function(x) paste(x['homeTeam'],'v',x['away
 shinyUI(fluidPage(
   
   # Application title
-  titlePanel('Hello World!'),
+  titlePanel('MineBalls'),
+  h3('Twitter sentiment analyser'),
   
   # Sidebar with a dropdown to select match, and entry box for bandwidth
   sidebarLayout(
@@ -23,6 +24,8 @@ shinyUI(fluidPage(
       ),    
     # Show a plot of the generated distribution
     mainPanel (
+      h3(textOutput("scoreboard"), style='text-align:center;'),
+      
       plotOutput('sentimentPlot')
       )
     )
