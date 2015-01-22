@@ -1,0 +1,1 @@
+{fullTime: "21:52", secondHalf: "21:03", halfTime: "20:50", kickOff: "20:01", penaltyAwarded: "20:47", penaltyMissed: "20:49"}
