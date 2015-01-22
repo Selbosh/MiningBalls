@@ -45,12 +45,15 @@ def streamScheduler(matchList):
 		s.enterabs(preKickOff, 1, streamer, (fixture['id'], endTime))
 		print 'Stream scheduled for', fixture['homeTeam'], 'vs.', fixture['awayTeam']
 		print 'Kick-off is at', kickOff(fixture), 'and streamer will start 15 mins before.'
+		with open('log.txt', 'a') as logfile:
+			matchlog = json.dumps(fixture)
+			logfile.write(matchlog+'\n')
 	try:
 		s.run()
 	except KeyboardInterrupt:
 		print 'Stream scheduler cancelled by user (KeyboardInterrupt)'
 
-def main():
+def main():	
 	streamScheduler(matchesOfTheDay())
 
 if __name__ == '__main__':
