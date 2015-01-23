@@ -34,26 +34,30 @@ shinyServer(function(input, output) {
   ###
   output$testtext <- renderPrint({
     #input$chosen_tag
-    #unlist(match_hashtags[[input$chosen_match==match_IDs]])
-    'Enter stuff to test here.'
+    #unlist(match_hashtags[input$chosen_match==match_IDs])
+    #match_data[input$chosen_match==match_IDs]
+    unlist(match_hashtags[input$chosen_match==match_IDs],recursive=FALSE)
+    #match_IDs
+    #'Enter stuff to test here.'
   })
   ###
   
   output$tagChooser <- renderUI({
     selected_match <- input$chosen_match==match_IDs
-    tag_choices = match_hashtags[[selected_match]]
-    names(tag_choices) = match_hashtags[[selected_match]]
+    tag_choices = names(unlist(match_hashtags[selected_match],recursive=FALSE)) #homeTag, awayTag
+    names(tag_choices) = unlist(match_hashtags[selected_match],recursive=FALSE)
     selectInput("chosen_tag",
                 h4("Hashtag"),
                 tag_choices
                 )
   })
   
-  output$scoreboard <- renderText({ #FIX ME!
+  output$scoreboard <- renderText({
     selected <- input$chosen_match==match_IDs
-    paste(match_data[[selected]]$homeTeam, match_data[[selected]]$goalsHomeTeam,
+    match <- unlist(match_data[selected], recursive=FALSE)
+    paste(match$homeTeam, match$goalsHomeTeam,
           '-',
-          match_data[[selected]]$goalsAwayTeam, match_data[[selected]]$awayTeam)    
+          match$goalsAwayTeam, match$awayTeam)    
   })
   
   output$sentimentPlot <- renderPlot({
