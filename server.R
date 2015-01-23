@@ -1,29 +1,83 @@
 library(shiny)
 library(rjson)
 
-# Define server logic required to draw a histogram
+setwd('~/GitHub/MiningBalls')
+firstRun = TRUE
+
+# Details of each fixture including teams, score and date
+match_data <- lapply(readLines('log.txt'), fromJSON)
+match_IDs <- lapply(match_data, function(x) paste(x[['id']]))
+names(match_IDs) <- lapply(match_data, function(x) paste(x['homeTeam'],'v',x['awayTeam']))
+
+# Details of teams, including short names and logo image URLs
+team_data <- fromJSON(file='teams.json')
+team_names <- lapply(team_data, function(x) x[['name']])
+team_hashtags <- fromJSON(file='team_hashtags.json')
+
+# Has same indices as match_data
+match_hashtags <- lapply(match_data, function(x) list(homeTag = team_hashtags[[x[['homeTeam']]]],
+                                                      awayTag = team_hashtags[[x[['awayTeam']]]]))
+
 shinyServer(function(input, output) {
   
-  # Expression that generates a histogram. The expression is
-  # wrapped in a call to renderPlot to indicate that:
-  #
-  #   1)  It is "reactive" and therefore should re-execute automatically
-  #       when inputs change
-  #   2)  Its output type is a plot
+  output$teams <- renderPrint({
+    team_names
+  })
   
-  matchID = saved_matches[[1]]$id
+  output$matchChooser <- renderUI({
+    selectInput("chosen_match",
+                h4("Football match"),
+                match_IDs
+                ) 
+  })
   
-  output$scoreboard <- renderText({
-    paste(saved_matches[[1]]$homeTeam, saved_matches[[1]]$goalsHomeTeam,
+  ###
+  output$testtext <- renderPrint({
+    #input$chosen_tag
+    #unlist(match_hashtags[[input$chosen_match==match_IDs]])
+    'Enter stuff to test here.'
+  })
+  ###
+  
+  output$tagChooser <- renderUI({
+    selected_match <- input$chosen_match==match_IDs
+    tag_choices = match_hashtags[[selected_match]]
+    names(tag_choices) = match_hashtags[[selected_match]]
+    selectInput("chosen_tag",
+                h4("Hashtag"),
+                tag_choices
+                )
+  })
+  
+  output$scoreboard <- renderText({ #FIX ME!
+    selected <- input$chosen_match==match_IDs
+    paste(match_data[[selected]]$homeTeam, match_data[[selected]]$goalsHomeTeam,
           '-',
-          saved_matches[[1]]$goalsAwayTeam, saved_matches[[1]]$awayTeam)    
+          match_data[[selected]]$goalsAwayTeam, match_data[[selected]]$awayTeam)    
   })
   
   output$sentimentPlot <- renderPlot({
-    x     <- faithful[, 2] # Old Faithful Geyser data
-    #bins  <- seq(min(x), max(x), length.out = input$bins + 1)
-    
-    # draw the histogram with the specified number of bins
-    hist(x, col = 'skyblue', border = 'white', main=paste('Match ID:',matchID))
-  })
+    match_file <- paste0('tweets/', input$chosen_match, '.csv')
+    if(!file.exists(match_file) && firstRun) tweets <- data.frame(time=seq(1,10,1), sentiment = 5*rnorm(10))
+    else tweets <- read.csv(match_file)
+    firstRun=FALSE
+    tweets$time <- as.POSIXct(tweets$time, origin="1970-01-01")
+    plot(tweets$time,
+         lowess(tweets$time, f=input$f, tweets$sentiment)$y,
+         col='limegreen', type='l', lwd=2,
+         ylab='Tweet sentiment',
+         main=input$matchChooser,
+         xlab='Time')
+    unneededTags <- c(which((levels(tweets$hashtags)=='Both')), which((levels(tweets$hashtags)=='')))
+    legendTags <- levels(tweets$hashtags)[-unneededTags]
+#     if(length(input$hashTag)>0) {
+#       for (k in input$hashTag) {
+#         title(main=legendTags[k])
+#         lines(lowess(tweets$time[tweets$hashtags=='EFC'],
+#               tweets$sentiment[tweets$hashtags=='EFC']),
+#               col=c(1,2,3,4,5)[k])
+#       }
+#       legend("bottomleft", legend=legendTags, lwd=2, col=c('red','blue'))
+#     }
+ })
 })
