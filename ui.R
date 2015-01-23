@@ -6,13 +6,16 @@ shinyUI(fluidPage(
   
   # Application title
   titlePanel('mineBalls'),
-  'twitter sentiment analyser',
+  #'twitter sentiment analyser',
   
   # Sidebar with a dropdown to select match, and entry box for bandwidth
   sidebarLayout(
     sidebarPanel(
       uiOutput("matchChooser"),
       uiOutput("tagChooser"),
+      checkboxInput('plotByTag',
+                    'Enable',
+                    value=FALSE),
       sliderInput('f',
                   h4('Smoothness'),
                   min=0.01,
@@ -22,9 +25,9 @@ shinyUI(fluidPage(
     
     mainPanel (
       h3(textOutput("scoreboard"), style='text-align:center;'),
-      plotOutput("sentimentPlot"),
+      plotOutput("sentimentPlot")
       #textOutput("teams"),
-      textOutput("testtext")
+      #textOutput("testtext")
       )
     )
   ))

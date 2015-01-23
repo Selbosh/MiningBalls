@@ -31,23 +31,18 @@ shinyServer(function(input, output) {
                 ) 
   })
   
-  ###
-  output$testtext <- renderPrint({
-    #input$chosen_tag
-    #unlist(match_hashtags[input$chosen_match==match_IDs])
-    #match_data[input$chosen_match==match_IDs]
-    unlist(match_hashtags[input$chosen_match==match_IDs],recursive=FALSE)
-    #match_IDs
-    #'Enter stuff to test here.'
-  })
-  ###
+#   ###
+#   output$testtext <- renderPrint({
+#     unlist(match_hashtags[input$chosen_match==match_IDs], recursive=FALSE)[input$chosen_tag]
+#   })
+#   ###
   
   output$tagChooser <- renderUI({
     selected_match <- input$chosen_match==match_IDs
     tag_choices = names(unlist(match_hashtags[selected_match],recursive=FALSE)) #homeTag, awayTag
     names(tag_choices) = unlist(match_hashtags[selected_match],recursive=FALSE)
     selectInput("chosen_tag",
-                h4("Hashtag"),
+                h4("Plot by hashtag"),
                 tag_choices
                 )
   })
@@ -72,8 +67,15 @@ shinyServer(function(input, output) {
          ylab='Tweet sentiment',
          main=input$matchChooser,
          xlab='Time')
-    unneededTags <- c(which((levels(tweets$hashtags)=='Both')), which((levels(tweets$hashtags)=='')))
-    legendTags <- levels(tweets$hashtags)[-unneededTags]
+    graphTag <- unlist(match_hashtags[input$chosen_match==match_IDs], recursive=FALSE)[input$chosen_tag]
+    if (input$plotByTag){
+      chosenTweets <- tweets[tweets$hashtags==graphTag,]
+      lines(chosenTweets$time,
+            lowess(chosenTweets$time, f=input$f, chosenTweets$sentiment)$y,
+            col='blue', lty=3)
+    }
+
+    
 #     if(length(input$hashTag)>0) {
 #       for (k in input$hashTag) {
 #         title(main=legendTags[k])
